@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: 'Open Sauce One', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ponytail: native CSS scroll-snap, desktop only. */
+@media (min-width: 768px) {
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+/* a11y: kill smooth-scroll for users who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+}
+
+/* When modal/overlay is open, prevent scroll bounce on desktop too */
+html:has(body[style*="overflow: hidden"]) {
+  overflow: hidden;
+}
