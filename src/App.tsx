@@ -746,12 +746,7 @@ export default function App() {
   const s1Focal = isMobile ? 0.7 : 0.8
 
   // Section 2
-  const section2Ref = useRef<HTMLElement>(null)
-  const s2Cards = useRef<(HTMLElement | null)[]>([])
-  const s2Positions = useMaskPositions(section2Ref, s2Cards)
-  const s2ImgWidth = useImageWidth(SECTION2_IMAGE, section2Ref)
   const s2Reveal = useStaggeredReveal(4)
-  const s2Focal = isMobile ? 0.65 : 0.8
 
   // Sections 3-7
   const introReveal = useStaggeredReveal(1)
@@ -765,7 +760,6 @@ export default function App() {
 
   // ponytail: useMergeRefs instead of fragile cast pattern
   const setSection1 = useMergeRefs(section1Ref, s1Reveal.containerRef)
-  const setSection2 = useMergeRefs(section2Ref, s2Reveal.containerRef)
 
   const implantDetails = [
     {
@@ -870,62 +864,74 @@ export default function App() {
       {/* ====================================================================== */}
       {/* SECTION 2 - SMILE GALLERY (interactive services) */}
       {/* ====================================================================== */}
-      <section id="gallery" ref={setSection2} className="min-h-screen md:h-screen w-full overflow-hidden flex flex-col pt-1.5 md:pt-2 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2">
-        <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 grid-rows-[auto_auto_auto_auto] md:grid-rows-[1fr_1fr_0.8fr] gap-1.5 md:gap-2">
-          <MaskedCard
-            bgImage={SECTION2_IMAGE} position={s2Positions[0]} imageWidth={s2ImgWidth} focalX={s2Focal}
-            cardRef={(el) => (s2Cards.current[0] = el)}
-            className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[160px] md:min-h-0"
-            style={s2Reveal.getAnimStyle(0)}
-          >
-            <h2 className="absolute top-4 left-5 md:top-6 md:left-7 text-white md:text-black text-2xl md:text-3xl font-bold z-10">Smile Gallery</h2>
-            <span className="absolute bottom-4 left-5 md:bottom-6 md:left-7 text-white md:text-black text-xs md:text-sm font-semibold z-10">Our cosmetic dental work</span>
-          </MaskedCard>
-
-          <MaskedCard
-            bgImage={SECTION2_IMAGE} position={s2Positions[1]} imageWidth={s2ImgWidth} focalX={s2Focal}
-            cardRef={(el) => (s2Cards.current[1] = el)}
-            className="md:row-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[200px] md:min-h-0"
-            style={s2Reveal.getAnimStyle(1)}
-          >
-            <div className="absolute bottom-16 left-5 md:bottom-20 md:left-7 text-white text-xs md:text-sm font-semibold leading-4 md:leading-5 z-10">
-              If you want a gorgeous smile,<br />call us to ask about a smile makeover.
+      <section id="gallery" ref={s2Reveal.containerRef as React.RefObject<HTMLElement>} className="min-h-screen md:h-screen w-full overflow-hidden flex flex-col pt-1.5 md:pt-2 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2">
+        <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-2">
+          {/* LEFT COLUMN */}
+          <div className="flex flex-col gap-1.5 md:gap-2">
+            {/* Title Card */}
+            <div className="rounded-xl md:rounded-2xl bg-stone-50 p-5 md:p-7 flex flex-col justify-between flex-[1.2] min-h-[180px] md:min-h-0 transition-colors" style={s2Reveal.getAnimStyle(0)}>
+              <h2 className="text-[clamp(3rem,7vw,6.5rem)] font-bold leading-[0.95] text-black">Smile<br />Gallery</h2>
+              <p className="text-xs md:text-sm font-semibold text-black">Our cosmetic dental work</p>
             </div>
-            <a href={`tel:${BUSINESS.phone}`} className="absolute bottom-4 right-4 md:bottom-6 md:right-6 px-5 py-3 md:px-8 md:py-5 bg-white rounded-full text-black text-base md:text-xl font-bold z-10 hover:scale-105 transition-transform">
-              Call Us
-            </a>
-          </MaskedCard>
 
-          <MaskedCard
-            bgImage={SECTION2_IMAGE} position={s2Positions[2]} imageWidth={s2ImgWidth} focalX={s2Focal}
-            cardRef={(el) => (s2Cards.current[2] = el)}
-            className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[160px] md:min-h-0"
-            style={s2Reveal.getAnimStyle(2)}
-          >
-            <h2 className="absolute top-4 left-5 md:top-6 md:left-7 text-white md:text-black text-[clamp(3rem,7vw,6rem)] font-bold leading-[0.9] z-10">Smile<br />makeover</h2>
-          </MaskedCard>
+            {/* Images Card Row */}
+            <div className="flex gap-1.5 md:gap-2 flex-1 min-h-[140px] md:min-h-0" style={s2Reveal.getAnimStyle(1)}>
+              <div className="flex-1 rounded-xl md:rounded-2xl overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=600&auto=format&fit=crop"
+                  alt="Professional dental cosmetic checkup"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 rounded-xl md:rounded-2xl overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?q=80&w=600&auto=format&fit=crop"
+                  alt="Beautiful healthy aesthetic smile"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
 
-          {/* Services strip — now interactive */}
-          <MaskedCard
-            bgImage={SECTION2_IMAGE} position={s2Positions[3]} imageWidth={s2ImgWidth} focalX={s2Focal}
-            cardRef={(el) => (s2Cards.current[3] = el)}
-            className="col-span-1 md:col-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[200px] md:min-h-0"
-            style={s2Reveal.getAnimStyle(3)}
-          >
-            <div className="absolute inset-0 z-10 flex flex-wrap md:flex-nowrap gap-1.5 md:gap-2 p-2 md:p-3">
+            {/* CTA Consultation Card */}
+            <div className="rounded-xl md:rounded-2xl bg-zinc-200 p-5 md:p-7 flex items-end justify-between flex-[0.8] min-h-[160px] md:min-h-0 transition-colors" style={s2Reveal.getAnimStyle(2)}>
+              <div>
+                <p className="text-xs md:text-sm font-semibold text-black mb-2 md:mb-3">Smile Makeover</p>
+                <h3 className="text-xl md:text-3xl font-bold text-black leading-6 md:leading-8">Aesthetic &<br />Cosmetic<br />Enhancements</h3>
+              </div>
+              <a
+                href={`tel:${BUSINESS.phone}`}
+                className="px-5 py-3 md:px-8 md:py-5 bg-white rounded-full text-black text-base md:text-xl font-bold hover:scale-105 transition-transform"
+              >
+                Call Us
+              </a>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN */}
+          <div className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[350px] md:min-h-0 group" style={s2Reveal.getAnimStyle(3)}>
+            <img
+              src={SECTION2_IMAGE}
+              alt="Cosmetic smile makeover showcase"
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            {/* Services strip overlayed at bottom */}
+            <div className="absolute bottom-3 left-3 right-3 md:bottom-5 md:left-5 md:right-5 z-10 flex flex-wrap md:flex-nowrap gap-1.5 md:gap-2 bg-black/10 backdrop-blur-md p-2 md:p-3 rounded-2xl border border-white/10 shadow-lg">
               {services.map((svc, i) => (
                 <button
                   key={svc.name}
                   onClick={() => setActiveService(i)}
-                  className={`flex-1 min-w-[calc(50%-4px)] md:min-w-0 rounded-xl md:rounded-2xl p-3 md:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 ${
-                    activeService === i ? 'bg-white/90 backdrop-blur-md' : 'bg-white/20 backdrop-blur-xl hover:bg-white/30'
+                  className={`flex-1 min-w-[calc(50%-4px)] md:min-w-0 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 ${
+                    activeService === i ? 'bg-white text-black shadow-md scale-[1.02]' : 'bg-black/40 hover:bg-black/60 text-white'
                   }`}
                 >
-                  <h3 className={`text-xl md:text-4xl font-bold leading-[1.05] whitespace-pre-line ${activeService === i ? 'text-black' : 'text-white'}`}>
+                  <h3 className="text-xs md:text-sm font-bold leading-tight whitespace-pre-line tracking-tight">
                     {svc.name}
                   </h3>
                   {svc.num && (
-                    <div className={`self-end w-8 h-8 md:w-12 md:h-12 rounded-full border flex items-center justify-center text-xs md:text-sm font-semibold ${
+                    <div className={`self-end w-6 h-6 md:w-8 md:h-8 rounded-full border flex items-center justify-center text-[10px] md:text-xs font-bold ${
                       activeService === i ? 'border-black text-black' : 'border-white text-white'
                     }`}>
                       {svc.num}
@@ -934,7 +940,7 @@ export default function App() {
                 </button>
               ))}
             </div>
-          </MaskedCard>
+          </div>
         </div>
       </section>
 
