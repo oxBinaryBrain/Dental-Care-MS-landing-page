@@ -241,7 +241,7 @@ function useActiveSection(ids: string[]) {
           }
         })
       },
-      { threshold: 0.5 },
+      { threshold: 0.15 },
     )
     ids.forEach((id) => {
       const el = document.getElementById(id)
@@ -340,17 +340,35 @@ interface DetailModalProps {
 }
 
 function DetailModal({ open, onClose, title, children }: DetailModalProps) {
-  // Close on Escape
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const lastActiveRef = useRef<Element | null>(null)
+
+  // Lock body scroll when open
+  useLockBodyScroll(open)
+
+  // Close on Escape + focus management
   useEffect(() => {
     if (!open) return
+    lastActiveRef.current = document.activeElement
+    const timer = setTimeout(() => dialogRef.current?.focus(), 0)
+
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    return () => {
+      window.removeEventListener('keydown', handler)
+      clearTimeout(timer)
+      if (lastActiveRef.current instanceof HTMLElement) {
+        lastActiveRef.current.focus()
+      }
+    }
   }, [open, onClose])
 
   return (
-    <div className={`fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center transition-all duration-500 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-      <div className="bg-white rounded-2xl p-6 md:p-10 max-w-lg w-full mx-4 relative max-h-[85vh] overflow-y-auto" role="dialog" aria-modal="true" aria-label={title}>
+    <div
+      className={`fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center transition-all duration-500 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div ref={dialogRef} tabIndex={-1} className="bg-white rounded-2xl p-6 md:p-10 max-w-lg w-full mx-4 relative max-h-[85vh] overflow-y-auto outline-none" role="dialog" aria-modal="true" aria-label={title}>
         <button
           onClick={onClose}
           className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/10 transition-colors text-black text-sm font-bold"
@@ -371,29 +389,35 @@ function DetailModal({ open, onClose, title, children }: DetailModalProps) {
 // Splash screen
 // ---------------------------------------------------------------------------
 function SplashScreen({ onComplete }: { onComplete: () => void }) {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(() => (reducedMotion() ? 100 : 0))
   const [exiting, setExiting] = useState(false)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (reducedMotion()) {
-      setCount(100)
       const t = setTimeout(onComplete, 300)
       return () => clearTimeout(t)
     }
     let step = 0
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       step += 1
       setCount(step)
       if (step >= 100) {
-        clearInterval(interval)
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        intervalRef.current = null
         setTimeout(() => setExiting(true), 200)
         setTimeout(() => onComplete(), 900)
       }
     }, 20)
-    return () => clearInterval(interval)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
   }, [onComplete])
 
   const skip = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = null
     setExiting(true)
     setTimeout(onComplete, 600)
   }, [onComplete])
@@ -424,9 +448,22 @@ function SplashScreen({ onComplete }: { onComplete: () => void }) {
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false)
+  const desktopMenuRef = useRef<HTMLDivElement>(null)
 
   // ponytail: safe scroll lock — avoids iOS Safari bounce bugs
   useLockBodyScroll(mobileOpen || desktopMenuOpen)
+
+  // Close desktop menu on click outside
+  useEffect(() => {
+    if (!desktopMenuOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (desktopMenuRef.current && !desktopMenuRef.current.contains(e.target as Node)) {
+        setDesktopMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [desktopMenuOpen])
 
   const jumpTo = (id: string) => {
     setMobileOpen(false)
@@ -435,7 +472,10 @@ function Navbar() {
     if (!el) return
     const html = document.documentElement
     html.style.scrollSnapType = 'none'
-    el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' })
+    // Defer scroll so any body-scroll-lock cleanup runs first
+    setTimeout(() => {
+      el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' })
+    }, 0)
     setTimeout(() => html.style.removeProperty('scroll-snap-type'), 700)
   }
 
@@ -462,7 +502,7 @@ function Navbar() {
 
         {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-3">
-          <div className="relative">
+          <div className="relative" ref={desktopMenuRef}>
             <button
               onClick={() => setDesktopMenuOpen(v => !v)}
               className="px-6 py-3 bg-white rounded-full border border-black/20 text-sm font-semibold hover:bg-black hover:text-white transition-colors duration-200 text-black"
@@ -524,7 +564,7 @@ function Navbar() {
               <a
                 key={link}
                 href="#"
-                onClick={() => jumpTo(sectionMap[link] || 'hero')}
+                onClick={(e) => { e.preventDefault(); jumpTo(sectionMap[link] || 'hero') }}
                 className="text-4xl font-bold text-black hover:text-neutral-500 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
                 style={{
                   opacity: mobileOpen ? 1 : 0,
@@ -706,7 +746,7 @@ export default function App() {
       {/* ====================================================================== */}
       {/* SECTION 1 - HERO */}
       {/* ====================================================================== */}
-      <section id="hero" ref={setSection1} className="h-screen w-full overflow-hidden flex flex-col pt-24 md:pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2">
+      <section id="hero" ref={setSection1} className="h-screen w-full overflow-hidden flex flex-col pt-24 px-3 md:px-5 pb-1.5 md:pb-2 gap-1.5 md:gap-2">
         {featureBars.map((bar, i) => (
           <MaskedCard
             key={bar}
