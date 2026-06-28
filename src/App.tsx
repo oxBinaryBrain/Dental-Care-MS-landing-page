@@ -1080,16 +1080,16 @@ export default function App() {
       {/* ====================================================================== */}
       {/* SECTION 7 - CONTACT + FOOTER */}
       {/* ====================================================================== */}
-      <section id="contact" ref={contactReveal.containerRef as React.RefObject<HTMLElement>} className="min-h-screen w-full overflow-hidden flex flex-col pt-20 md:pt-24 px-3 md:px-5 pb-6 md:pb-8 bg-gradient-to-b from-white via-stone-50/30 to-stone-50/50">
+      <section id="contact" ref={contactReveal.containerRef as React.RefObject<HTMLElement>} className="min-h-screen w-full overflow-hidden flex flex-col pt-20 md:pt-24 px-3 md:px-5 pb-6 md:pb-8 bg-stone-50">
         <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full gap-6 md:gap-8">
           <div style={contactReveal.getAnimStyle(0)} className="flex flex-col gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Contact Us</span>
-            <h2 className="text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[0.9] text-black">Get In Touch</h2>
+            <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">Contact & Booking</span>
+            <h2 className="text-[clamp(2.5rem,7vw,5.5rem)] font-bold leading-[0.9] text-black">Get In Touch</h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch" style={contactReveal.getAnimStyle(1)}>
-            {/* Left Column: Form Card */}
-            <div className="lg:col-span-7 bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-neutral-100 shadow-sm flex flex-col justify-center min-h-[420px]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-7 items-stretch" style={contactReveal.getAnimStyle(1)}>
+            {/* Left Column: Spacious Minimalist Form */}
+            <div className="lg:col-span-6 bg-white border border-black/5 rounded-2xl md:rounded-3xl p-6 md:p-8 flex flex-col justify-center min-h-[460px]">
               {isSubmitted ? (
                 <div className="text-center flex flex-col items-center justify-center gap-5 py-4 animate-[fadeIn_0.5s_ease-out]">
                   <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center shadow-lg">
@@ -1098,14 +1098,14 @@ export default function App() {
                     </svg>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-black">Appointment Requested</h3>
+                    <h3 className="text-2xl font-bold text-black">Booking Registered</h3>
                     <p className="text-sm text-neutral-600 max-w-md mx-auto leading-relaxed">
-                      Thank you, <span className="font-semibold text-black">{formName}</span>. Your request for a <span className="font-semibold text-black">{formService}</span> has been registered.
+                      Thank you, <span className="font-semibold text-black">{formName}</span>. We've registered your request for a <span className="font-semibold text-black">{formService}</span>.
                     </p>
                   </div>
-                  <div className="text-xs text-neutral-500 bg-stone-50 border border-neutral-100 rounded-xl p-4 w-full max-w-sm space-y-1.5 mx-auto">
-                    <p className="uppercase tracking-wider font-semibold text-[10px] text-neutral-400">We will reach out to you at</p>
-                    <p className="font-semibold text-neutral-800 text-sm">{formPhone} • {formEmail}</p>
+                  <div className="text-xs text-neutral-500 bg-stone-50 border border-neutral-100 rounded-xl p-4 w-full max-w-sm space-y-1 mx-auto">
+                    <p className="uppercase tracking-widest font-bold text-[9px] text-neutral-400">We will reach out shortly at</p>
+                    <p className="font-semibold text-neutral-800">{formPhone} • {formEmail}</p>
                   </div>
                   <button
                     onClick={handleResetForm}
@@ -1115,16 +1115,16 @@ export default function App() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleFormSubmit} className="space-y-5">
+                <form onSubmit={handleFormSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider block">Choose a Service</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest block">Select Service</label>
+                    <div className="flex flex-wrap gap-1.5">
                       {['Consultation', 'Veneers', 'Crowns', 'Implants', 'Whitening'].map((serviceName) => (
                         <button
                           key={serviceName}
                           type="button"
                           onClick={() => setFormService(serviceName)}
-                          className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all duration-200 ${
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ${
                             formService === serviceName
                               ? 'bg-black border-black text-white'
                               : 'bg-transparent border-black/10 hover:border-black/30 text-black hover:bg-stone-50'
@@ -1136,55 +1136,57 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
+                  <div className="space-y-4">
+                    <div className="relative">
                       <input
                         type="text"
                         placeholder="Your Name"
                         value={formName}
                         onChange={(e) => setFormName(e.target.value)}
-                        className={`w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all ${
-                          formErrors.name ? 'border-red-500 bg-red-50/10' : ''
+                        className={`w-full bg-transparent border-b border-black/10 focus:border-black py-2.5 px-0 text-sm outline-none transition-colors placeholder-neutral-400 font-medium ${
+                          formErrors.name ? 'border-red-500' : ''
                         }`}
                       />
-                      {formErrors.name && <p className="text-[11px] text-red-500 font-medium px-1">{formErrors.name}</p>}
+                      {formErrors.name && <p className="text-[10px] text-red-500 font-bold mt-1">{formErrors.name}</p>}
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          placeholder="Phone Number"
+                          value={formPhone}
+                          onChange={(e) => setFormPhone(e.target.value)}
+                          className={`w-full bg-transparent border-b border-black/10 focus:border-black py-2.5 px-0 text-sm outline-none transition-colors placeholder-neutral-400 font-medium ${
+                            formErrors.phone ? 'border-red-500' : ''
+                          }`}
+                        />
+                        {formErrors.phone && <p className="text-[10px] text-red-500 font-bold mt-1">{formErrors.phone}</p>}
+                      </div>
+
+                      <div className="relative">
+                        <input
+                          type="email"
+                          placeholder="Email Address"
+                          value={formEmail}
+                          onChange={(e) => setFormEmail(e.target.value)}
+                          className={`w-full bg-transparent border-b border-black/10 focus:border-black py-2.5 px-0 text-sm outline-none transition-colors placeholder-neutral-400 font-medium ${
+                            formErrors.email ? 'border-red-500' : ''
+                          }`}
+                        />
+                        {formErrors.email && <p className="text-[10px] text-red-500 font-bold mt-1">{formErrors.email}</p>}
+                      </div>
+                    </div>
+
+                    <div className="relative">
                       <input
-                        type="tel"
-                        placeholder="Phone Number"
-                        value={formPhone}
-                        onChange={(e) => setFormPhone(e.target.value)}
-                        className={`w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all ${
-                          formErrors.phone ? 'border-red-500 bg-red-50/10' : ''
-                        }`}
+                        type="text"
+                        placeholder="Message or special requests (optional)"
+                        value={formMessage}
+                        onChange={(e) => setFormMessage(e.target.value)}
+                        className="w-full bg-transparent border-b border-black/10 focus:border-black py-2.5 px-0 text-sm outline-none transition-colors placeholder-neutral-400 font-medium"
                       />
-                      {formErrors.phone && <p className="text-[11px] text-red-500 font-medium px-1">{formErrors.phone}</p>}
                     </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <input
-                      type="email"
-                      placeholder="Email Address"
-                      value={formEmail}
-                      onChange={(e) => setFormEmail(e.target.value)}
-                      className={`w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all ${
-                        formErrors.email ? 'border-red-500 bg-red-50/10' : ''
-                      }`}
-                    />
-                    {formErrors.email && <p className="text-[11px] text-red-500 font-medium px-1">{formErrors.email}</p>}
-                  </div>
-
-                  <div>
-                    <textarea
-                      placeholder="Additional details or concerns (optional)"
-                      rows={3}
-                      value={formMessage}
-                      onChange={(e) => setFormMessage(e.target.value)}
-                      className="w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all resize-none"
-                    />
                   </div>
 
                   <button
@@ -1198,12 +1200,12 @@ export default function App() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
-                        Submitting...
+                        Scheduling slot...
                       </span>
                     ) : (
                       <>
-                        <span>Request Free Consultation</span>
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="rotate-[-45deg] transition-transform group-hover:translate-x-0.5">
+                        <span>Request Appointment</span>
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="rotate-[-45deg] transition-transform group-hover:translate-x-0.5">
                           <path d="M1 7h12m0 0L8 2m5 5L8 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </>
@@ -1213,93 +1215,66 @@ export default function App() {
               )}
             </div>
 
-            {/* Right Column: Info + Map */}
-            <div className="lg:col-span-5 flex flex-col gap-6 justify-between">
-              {/* Modern High-Contrast Contact Card */}
-              <div className="bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-950 text-white rounded-2xl md:rounded-3xl p-6 md:p-8 flex flex-col justify-between border border-white/5 shadow-xl">
+            {/* Right Column: Cohesive Light Panels */}
+            <div className="lg:col-span-6 flex flex-col gap-4 justify-between">
+              {/* Spacious, Clean Contact Info Card */}
+              <div className="bg-white border border-black/5 rounded-2xl md:rounded-3xl p-6 md:p-8 flex flex-col justify-between flex-1 hover:border-black/10 transition-colors">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-6 tracking-tight">Contact Information</h3>
-                  <div className="space-y-5 text-sm text-neutral-300">
-                    <div className="flex items-start gap-4">
-                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">Phone</p>
-                        <a href={`tel:${BUSINESS.phone}`} className="text-base font-semibold text-white hover:text-neutral-300 transition-colors">{BUSINESS.phoneLabel}</a>
-                      </div>
+                  <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-6">Office Information</h3>
+                  <div className="space-y-6 text-black">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Phone</span>
+                      <a href={`tel:${BUSINESS.phone}`} className="text-xl md:text-2xl font-bold hover:opacity-75 transition-opacity inline-block">{BUSINESS.phoneLabel}</a>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                          <polyline points="22,6 12,13 2,6" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">Email</p>
-                        <a href={`mailto:${BUSINESS.email}`} className="text-sm font-semibold text-white hover:text-neutral-300 transition-colors break-all">{BUSINESS.email}</a>
-                      </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Email</span>
+                      <a href={`mailto:${BUSINESS.email}`} className="text-sm md:text-base font-semibold hover:opacity-75 transition-opacity inline-block">{BUSINESS.email}</a>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                          <circle cx="12" cy="10" r="3" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">Address</p>
-                        <p className="text-sm font-semibold text-white leading-snug">{BUSINESS.address}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4 pt-1 border-t border-white/10">
-                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                          <circle cx="12" cy="12" r="10" />
-                          <polyline points="12 6 12 12 16 14" />
-                        </svg>
-                      </div>
-                      <div className="w-full">
-                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-1">Hours</p>
-                        <div className="space-y-1 text-xs">
-                          {BUSINESS.hours.map((h) => (
-                            <p key={h.day} className="flex justify-between max-w-[240px]">
-                              <span className="text-neutral-400">{h.day}</span>
-                              <span className="font-semibold text-white">{h.time}</span>
-                            </p>
-                          ))}
-                        </div>
-                      </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Clinic Location</span>
+                      <p className="text-sm font-semibold leading-snug">{BUSINESS.address}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Map Embed Card with custom hover overlay */}
-              <div className="rounded-2xl md:rounded-3xl overflow-hidden border border-neutral-200 shadow-sm relative group h-[200px] transition-transform duration-300 hover:scale-[1.01]">
-                <iframe
-                  title={`${BUSINESS.name} location on Google Maps`}
-                  src={BUSINESS.mapEmbed}
-                  className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-500"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-                <div className="absolute inset-0 bg-neutral-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                  <a
-                    href="https://maps.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pointer-events-auto px-4 py-2.5 bg-white text-black font-semibold text-xs rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform"
-                  >
-                    Open Google Maps
-                  </a>
+              {/* Sub-grid: Hours and Map */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Clean Hours Card */}
+                <div className="bg-zinc-100 rounded-2xl md:rounded-3xl p-5 md:p-6 flex flex-col justify-between hover:bg-zinc-200/40 transition-colors">
+                  <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4">Hours</h4>
+                  <div className="space-y-1.5 text-xs text-black font-semibold">
+                    {BUSINESS.hours.map((h) => (
+                      <div key={h.day} className="flex justify-between border-b border-black/5 pb-1.5 last:border-0 last:pb-0">
+                        <span className="text-neutral-500 font-medium">{h.day}</span>
+                        <span>{h.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Clean Map Card */}
+                <div className="rounded-2xl md:rounded-3xl overflow-hidden border border-black/5 shadow-sm relative group h-[160px] md:h-auto">
+                  <iframe
+                    title={`${BUSINESS.name} location on Google Maps`}
+                    src={BUSINESS.mapEmbed}
+                    className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-300"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                    <a
+                      href="https://maps.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pointer-events-auto px-4 py-2 bg-white text-black font-bold text-xs rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                    >
+                      Open in Maps
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1307,8 +1282,8 @@ export default function App() {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 pt-8 border-t border-neutral-200" style={contactReveal.getAnimStyle(2)}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
+        <div className="mt-12 pt-8 border-t border-black/10" style={contactReveal.getAnimStyle(2)}>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500 font-medium">
             <p>&copy; {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.</p>
             <div className="flex items-center gap-6">
               {['Privacy Policy', 'Terms of Service', 'Accessibility'].map((linkText) => (
