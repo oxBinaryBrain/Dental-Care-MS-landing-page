@@ -446,7 +446,7 @@ function SplashScreen({ onComplete }: { onComplete: () => void }) {
 // ---------------------------------------------------------------------------
 // Navbar
 // ---------------------------------------------------------------------------
-function Navbar() {
+function Navbar({ visible }: { visible: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false)
   const desktopMenuRef = useRef<HTMLDivElement>(null)
@@ -494,7 +494,9 @@ function Navbar() {
       >
         Skip to content
       </a>
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-6 py-2 md:py-3 bg-white/80 backdrop-blur-md transition-colors duration-300">
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-6 py-2 md:py-3 bg-white/80 backdrop-blur-md transition-all duration-500 ${
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
+      }`}>
         {/* Logo */}
         <div className="flex flex-col">
           <span className="text-xl md:text-2xl font-extrabold uppercase tracking-tight leading-none text-black">Dental</span>
@@ -798,7 +800,7 @@ export default function App() {
   return (
     <div className="bg-white transition-colors duration-300">
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
-      <Navbar />
+      <Navbar visible={SECTION_IDS[activeIndex] === 'hero'} />
       <ScrollDots activeIndex={activeIndex} />
 
       {/* ====================================================================== */}
