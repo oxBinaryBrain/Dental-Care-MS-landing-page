@@ -49,10 +49,11 @@ const services: ServiceInfo[] = [
   { name: 'Dental\nImplants', num: null, details: 'Permanent tooth replacements that look, feel, and function like natural teeth. A titanium post fuses with your jawbone for lifelong stability. Success rate over 95%.' },
 ]
 
-const navLinks = ['Home', 'Smile Gallery', 'Implants', 'About', 'Reviews', 'FAQ', 'Contact']
+const navLinks = ['Intro', 'Home', 'Smile Gallery', 'Implants', 'About', 'Reviews', 'FAQ', 'Contact']
 
 // The scrollable sections, in order. Drives the scroll dots + active state.
 const SECTIONS = [
+  { id: 'intro', label: 'Intro' },
   { id: 'hero', label: 'Home' },
   { id: 'gallery', label: 'Smile Gallery' },
   { id: 'implants', label: 'Implants' },
@@ -480,8 +481,9 @@ function Navbar() {
   }
 
   const sectionMap: Record<string, string> = {
-    Home: 'hero', 'Smile Gallery': 'gallery', Implants: 'implants',
-    About: 'about', Reviews: 'reviews', FAQ: 'faq', Contact: 'contact',
+    Intro: 'intro', Home: 'hero', 'Smile Gallery': 'gallery',
+    Implants: 'implants', About: 'about', Reviews: 'reviews',
+    FAQ: 'faq', Contact: 'contact',
   }
 
   return (
@@ -750,6 +752,7 @@ export default function App() {
   const s2Focal = isMobile ? 0.65 : 0.8
 
   // Sections 3-7
+  const introReveal = useStaggeredReveal(1)
   const s3Reveal = useStaggeredReveal(4)
   const aboutReveal = useStaggeredReveal(4)
   const reviewsReveal = useStaggeredReveal(testimonials.length + 1)
@@ -797,6 +800,16 @@ export default function App() {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       <Navbar />
       <ScrollDots activeIndex={activeIndex} />
+
+      {/* ====================================================================== */}
+      {/* SECTION 0 - INTRO (BLANK) */}
+      {/* ====================================================================== */}
+      <section id="intro" ref={introReveal.containerRef as React.RefObject<HTMLElement>} className="h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-white pt-24 px-3 md:px-5">
+        <div style={introReveal.getAnimStyle(0)} className="text-center max-w-xl">
+          {/* Kept blank for user placeholder */}
+          <span className="text-xs uppercase tracking-widest text-neutral-400 font-bold">New Section</span>
+        </div>
+      </section>
 
       {/* ====================================================================== */}
       {/* SECTION 1 - HERO */}
