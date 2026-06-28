@@ -800,7 +800,7 @@ export default function App() {
   return (
     <div className="bg-white transition-colors duration-300">
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
-      <Navbar visible={SECTION_IDS[activeIndex] === 'hero'} />
+      <Navbar visible={SECTION_IDS[activeIndex] === 'intro'} />
       <ScrollDots activeIndex={activeIndex} />
 
       {/* ====================================================================== */}
