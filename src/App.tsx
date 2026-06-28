@@ -678,6 +678,61 @@ export default function App() {
   const [activeOverlay, setActiveOverlay] = useState<number | null>(null)
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
 
+  // Form State
+  const [formName, setFormName] = useState('')
+  const [formEmail, setFormEmail] = useState('')
+  const [formPhone, setFormPhone] = useState('')
+  const [formService, setFormService] = useState('Consultation')
+  const [formMessage, setFormMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const errs: Record<string, string> = {}
+    if (!formName.trim()) errs.name = 'Name is required'
+    if (!formEmail.trim()) {
+      errs.email = 'Email is required'
+    } else if (!/\S+@\S+\.\S+/.test(formEmail)) {
+      errs.email = 'Invalid email address'
+    }
+    if (!formPhone.trim()) {
+      errs.phone = 'Phone is required'
+    } else if (!/^\+?[0-9\s-]{7,15}$/.test(formPhone.replace(/\s+/g, ''))) {
+      errs.phone = 'Invalid phone number'
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setFormErrors(errs)
+      return
+    }
+
+    setFormErrors({})
+    setIsSubmitting(true)
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setIsSubmitted(true)
+    }, 1200)
+  }
+
+  const handleResetForm = () => {
+    setFormName('')
+    setFormEmail('')
+    setFormPhone('')
+    setFormService('Consultation')
+    setFormMessage('')
+    setIsSubmitted(false)
+  }
+
+  // Reset scroll to top on reload/mount
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual'
+    }
+    window.scrollTo(0, 0)
+  }, [])
+
   // Section 1
   const section1Ref = useRef<HTMLElement>(null)
   const s1Cards = useRef<(HTMLElement | null)[]>([])
@@ -1025,58 +1080,228 @@ export default function App() {
       {/* ====================================================================== */}
       {/* SECTION 7 - CONTACT + FOOTER */}
       {/* ====================================================================== */}
-      <section id="contact" ref={contactReveal.containerRef as React.RefObject<HTMLElement>} className="min-h-screen w-full overflow-hidden flex flex-col pt-20 md:pt-24 px-3 md:px-5 pb-6 md:pb-8">
+      <section id="contact" ref={contactReveal.containerRef as React.RefObject<HTMLElement>} className="min-h-screen w-full overflow-hidden flex flex-col pt-20 md:pt-24 px-3 md:px-5 pb-6 md:pb-8 bg-gradient-to-b from-white via-stone-50/30 to-stone-50/50">
         <div className="flex-1 flex flex-col justify-center max-w-5xl mx-auto w-full gap-6 md:gap-8">
-          <div style={contactReveal.getAnimStyle(0)}>
-            <h2 className="text-[clamp(2.5rem,8vw,6rem)] font-bold leading-[0.9] text-black">Get In<br />Touch</h2>
+          <div style={contactReveal.getAnimStyle(0)} className="flex flex-col gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Contact Us</span>
+            <h2 className="text-[clamp(2.5rem,7vw,5rem)] font-bold leading-[0.9] text-black">Get In Touch</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4 md:gap-6" style={contactReveal.getAnimStyle(1)}>
-            {/* Info card */}
-            <div className="bg-stone-50 rounded-xl md:rounded-2xl p-5 md:p-7 transition-colors">
-              <h3 className="text-lg font-bold text-black mb-4">Contact Information</h3>
-              <div className="space-y-4 text-sm text-neutral-600">
-                <div>
-                  <p className="font-semibold text-black mb-1">Phone</p>
-                  <a href={`tel:${BUSINESS.phone}`} className="hover:underline">{BUSINESS.phoneLabel}</a>
-                </div>
-                <div>
-                  <p className="font-semibold text-black mb-1">Email</p>
-                  <a href={`mailto:${BUSINESS.email}`} className="hover:underline">{BUSINESS.email}</a>
-                </div>
-                <div>
-                  <p className="font-semibold text-black mb-1">Address</p>
-                  <p>{BUSINESS.address}</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-black mb-1">Hours</p>
-                  <div className="space-y-0.5">
-                    {BUSINESS.hours.map((h) => (
-                      <p key={h.day} className="flex justify-between max-w-[260px]">
-                        <span>{h.day}</span><span>{h.time}</span>
-                      </p>
-                    ))}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch" style={contactReveal.getAnimStyle(1)}>
+            {/* Left Column: Form Card */}
+            <div className="lg:col-span-7 bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-neutral-100 shadow-sm flex flex-col justify-center min-h-[420px]">
+              {isSubmitted ? (
+                <div className="text-center flex flex-col items-center justify-center gap-5 py-4 animate-[fadeIn_0.5s_ease-out]">
+                  <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center shadow-lg">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
                   </div>
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold text-black">Appointment Requested</h3>
+                    <p className="text-sm text-neutral-600 max-w-md mx-auto leading-relaxed">
+                      Thank you, <span className="font-semibold text-black">{formName}</span>. Your request for a <span className="font-semibold text-black">{formService}</span> has been registered.
+                    </p>
+                  </div>
+                  <div className="text-xs text-neutral-500 bg-stone-50 border border-neutral-100 rounded-xl p-4 w-full max-w-sm space-y-1.5 mx-auto">
+                    <p className="uppercase tracking-wider font-semibold text-[10px] text-neutral-400">We will reach out to you at</p>
+                    <p className="font-semibold text-neutral-800 text-sm">{formPhone} • {formEmail}</p>
+                  </div>
+                  <button
+                    onClick={handleResetForm}
+                    className="mt-2 px-6 py-3 bg-black text-white hover:bg-neutral-800 transition-colors text-xs font-semibold rounded-full active:scale-[0.97]"
+                  >
+                    Submit Another Request
+                  </button>
                 </div>
-                <a
-                  href={`tel:${BUSINESS.phone}`}
-                  className="block w-full text-center py-3 bg-black text-white rounded-full font-semibold hover:opacity-90 transition-opacity mt-2"
-                >
-                  Book Appointment
-                </a>
-              </div>
+              ) : (
+                <form onSubmit={handleFormSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider block">Choose a Service</label>
+                    <div className="flex flex-wrap gap-2">
+                      {['Consultation', 'Veneers', 'Crowns', 'Implants', 'Whitening'].map((serviceName) => (
+                        <button
+                          key={serviceName}
+                          type="button"
+                          onClick={() => setFormService(serviceName)}
+                          className={`px-4 py-2 rounded-full text-xs font-semibold border transition-all duration-200 ${
+                            formService === serviceName
+                              ? 'bg-black border-black text-white'
+                              : 'bg-transparent border-black/10 hover:border-black/30 text-black hover:bg-stone-50'
+                          }`}
+                        >
+                          {serviceName}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <input
+                        type="text"
+                        placeholder="Your Name"
+                        value={formName}
+                        onChange={(e) => setFormName(e.target.value)}
+                        className={`w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all ${
+                          formErrors.name ? 'border-red-500 bg-red-50/10' : ''
+                        }`}
+                      />
+                      {formErrors.name && <p className="text-[11px] text-red-500 font-medium px-1">{formErrors.name}</p>}
+                    </div>
+
+                    <div className="space-y-1">
+                      <input
+                        type="tel"
+                        placeholder="Phone Number"
+                        value={formPhone}
+                        onChange={(e) => setFormPhone(e.target.value)}
+                        className={`w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all ${
+                          formErrors.phone ? 'border-red-500 bg-red-50/10' : ''
+                        }`}
+                      />
+                      {formErrors.phone && <p className="text-[11px] text-red-500 font-medium px-1">{formErrors.phone}</p>}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      value={formEmail}
+                      onChange={(e) => setFormEmail(e.target.value)}
+                      className={`w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all ${
+                        formErrors.email ? 'border-red-500 bg-red-50/10' : ''
+                      }`}
+                    />
+                    {formErrors.email && <p className="text-[11px] text-red-500 font-medium px-1">{formErrors.email}</p>}
+                  </div>
+
+                  <div>
+                    <textarea
+                      placeholder="Additional details or concerns (optional)"
+                      rows={3}
+                      value={formMessage}
+                      onChange={(e) => setFormMessage(e.target.value)}
+                      className="w-full bg-stone-50 border border-neutral-200 focus:border-black focus:bg-white rounded-xl py-3 px-4 text-sm outline-none transition-all resize-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-4 bg-black text-white rounded-full font-bold hover:bg-neutral-800 transition-colors relative flex items-center justify-center gap-2 overflow-hidden shadow-sm active:scale-[0.98] transition-transform disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Submitting...
+                      </span>
+                    ) : (
+                      <>
+                        <span>Request Free Consultation</span>
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="rotate-[-45deg] transition-transform group-hover:translate-x-0.5">
+                          <path d="M1 7h12m0 0L8 2m5 5L8 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
 
-            {/* Map card */}
-            <div className="rounded-xl md:rounded-2xl overflow-hidden min-h-[250px] md:min-h-0">
-              <iframe
-                title={`${BUSINESS.name} location on Google Maps`}
-                src={BUSINESS.mapEmbed}
-                className="w-full h-full min-h-[250px] md:min-h-0 border-0"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            {/* Right Column: Info + Map */}
+            <div className="lg:col-span-5 flex flex-col gap-6 justify-between">
+              {/* Modern High-Contrast Contact Card */}
+              <div className="bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-950 text-white rounded-2xl md:rounded-3xl p-6 md:p-8 flex flex-col justify-between border border-white/5 shadow-xl">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-6 tracking-tight">Contact Information</h3>
+                  <div className="space-y-5 text-sm text-neutral-300">
+                    <div className="flex items-start gap-4">
+                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">Phone</p>
+                        <a href={`tel:${BUSINESS.phone}`} className="text-base font-semibold text-white hover:text-neutral-300 transition-colors">{BUSINESS.phoneLabel}</a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                          <polyline points="22,6 12,13 2,6" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">Email</p>
+                        <a href={`mailto:${BUSINESS.email}`} className="text-sm font-semibold text-white hover:text-neutral-300 transition-colors break-all">{BUSINESS.email}</a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">Address</p>
+                        <p className="text-sm font-semibold text-white leading-snug">{BUSINESS.address}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4 pt-1 border-t border-white/10">
+                      <div className="w-9 h-9 shrink-0 rounded-full bg-white/10 flex items-center justify-center border border-white/5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                          <circle cx="12" cy="12" r="10" />
+                          <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                      </div>
+                      <div className="w-full">
+                        <p className="text-[10px] text-neutral-500 font-semibold uppercase tracking-wider mb-1">Hours</p>
+                        <div className="space-y-1 text-xs">
+                          {BUSINESS.hours.map((h) => (
+                            <p key={h.day} className="flex justify-between max-w-[240px]">
+                              <span className="text-neutral-400">{h.day}</span>
+                              <span className="font-semibold text-white">{h.time}</span>
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Map Embed Card with custom hover overlay */}
+              <div className="rounded-2xl md:rounded-3xl overflow-hidden border border-neutral-200 shadow-sm relative group h-[200px] transition-transform duration-300 hover:scale-[1.01]">
+                <iframe
+                  title={`${BUSINESS.name} location on Google Maps`}
+                  src={BUSINESS.mapEmbed}
+                  className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-500"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <div className="absolute inset-0 bg-neutral-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                  <a
+                    href="https://maps.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pointer-events-auto px-4 py-2.5 bg-white text-black font-semibold text-xs rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform"
+                  >
+                    Open Google Maps
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1085,10 +1310,16 @@ export default function App() {
         <div className="mt-12 pt-8 border-t border-neutral-200" style={contactReveal.getAnimStyle(2)}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-400">
             <p>&copy; {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-black transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-black transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-black transition-colors">Accessibility</a>
+            <div className="flex items-center gap-6">
+              {['Privacy Policy', 'Terms of Service', 'Accessibility'].map((linkText) => (
+                <a
+                  key={linkText}
+                  href="#"
+                  className="hover:text-black transition-colors relative pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-black after:transition-all hover:after:w-full"
+                >
+                  {linkText}
+                </a>
+              ))}
             </div>
           </div>
         </div>
